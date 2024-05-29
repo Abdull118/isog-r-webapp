@@ -162,7 +162,7 @@
   line-height: normal;
 }
 
-.dhuhrIqamah {
+.nextIqamah {
   color: #000;
   font-family: Inter;
   font-size: 18px;
@@ -170,6 +170,7 @@
   font-weight: 400;
   line-height: normal;
   text-align: center;
+  text-transform: uppercase;
 }
 .pm {
   font-family: Inter;
@@ -427,11 +428,69 @@
   padding-left: 15px;
   padding-top: 43px;
 }
-.fajr {
+
+.prayerContainer {
   display: flex;
   flex-direction: column;
   gap: 10px;
+  width: 108px;
+  padding-top: 10px;
 }
+
+.upcomingPrayer{
+    background-color: #D9D9D9;
+    color: black;
+    display:flex;
+    flex-direction: column;
+    gap: 10px;
+    padding-top: 10px;
+    width: 108px;
+}
+
+.prayerName{
+  color: white;
+  text-align: center
+}
+
+.prayerName1{
+  color: #00003E;
+  font-weight: 900;
+  text-align: center
+}
+
+.athanTime {
+  font-size: 20px
+}
+
+.athanTime1  {
+  color: #00003E;
+  font-weight: 900;
+  text-align: center;
+  font-size: 20px
+}
+
+.athanTime1 span{
+  color: #00003E;
+  font-weight: 900;
+  text-align: center;
+}
+
+.prayerTimer{
+  color: white;
+  font-size: 20px
+}
+
+.prayerTimer1{
+  font-size: 20px;
+  color: #00003E;
+  font-weight: 900;
+}
+
+.prayerTimer1 span{
+  color: #00003E;
+  font-weight: 900;
+}
+
 .fajrTime {
   color: #fff;
   font-family: Inter;
@@ -440,10 +499,12 @@
   font-weight: 400;
   line-height: normal;
 }
+
 .quranContainer {
   width: 95%;
   overflow: hidden;
 }
+
 .quran {
   color: #00003e;
   font-family: Inter, sans-serif;
@@ -603,6 +664,5 @@
   color: white;
   display: flex;
   flex-direction: row;
-  gap: 50px;
-  padding-top: 10px;
+  gap: 10px; 
 }

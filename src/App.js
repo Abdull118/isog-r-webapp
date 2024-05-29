@@ -57,9 +57,10 @@ function App() {
   const updateTime = () => {
     const currentTime = moment()
       .utcOffset(-4 * 60)
-      .format("h:mm"); // Adjust UTC offset here
+      .format("hh:mm"); // Adjust UTC offset here
     setBigTime(currentTime);
   };
+  
   const getAthan = async () => {
     try {
       const response = await fetch(
@@ -81,7 +82,7 @@ function App() {
   const getPrayerTimes = async () => {
     try {
       const response = await fetch(
-        `https://isog-prayer-times-server.onrender.com/prayers`
+        `https://isog-prayer-times-server.vercel.app/api/prayers`
       );
       const json = await response.json();
       setFajrPrayer(json.fajr);
@@ -97,7 +98,7 @@ function App() {
   const getHadiths = async () => {
     try {
       const response = await fetch(
-        `https://isog-prayer-times-server.onrender.com/hadiths`
+        `https://isog-prayer-times-server.vercel.app/api/hadiths`
       );
       const json = await response.json();
       setHadith(json.hadith);
@@ -109,7 +110,7 @@ function App() {
   const getNextPrayer = async () => {
     try {
       const response = await fetch(
-        "https://isog-prayer-times-server.onrender.com/nextPrayers",
+        "https://isog-prayer-times-server.vercel.app/api/nextPrayers",
         {
           method: "PUT",
           headers: {
@@ -177,16 +178,59 @@ function App() {
   const getAnnouncements = async () => {
     try {
       const response = await fetch(
-        `https://isog-prayer-times-server.onrender.com/announcements`
+        `https://isog-prayer-times-server.vercel.app/api/announcements`
       );
       const data = await response.json();
       setAnnouncements(data.annoucements);
     } catch (e) {}
   };
 
-  const [countdownTimeHr, setCountdownTimeHr] = useState("");
-  const [countdownTimeMn, setCountdownTimeMn] = useState("");
-  const [upcomingPrayerName, setUpcomingPrayerName] = useState("");
+  const [timeUntilNextPrayerHrs, setTimeUntilNextPrayerHrs] = useState('');
+
+  const [timeUntilNextPrayerMin, setTimeUntilNextPrayerMin] = useState('');
+
+  useEffect(() => {
+    if (bigTime && nextPrayer) {
+      calculateTimeUntilNextPrayer();
+    }
+  }, [bigTime, nextPrayer, fajrPrayer, dhurPrayer, asrPrayer, maghribPrayer, ishaPrayer]);
+
+  const calculateTimeUntilNextPrayer = () => {
+    const currentTime = moment(bigTime, 'HH:mm');
+    let nextPrayerTime;
+
+    switch (nextPrayer) {
+      case 'fajr':
+        nextPrayerTime = moment(fajrPrayer, 'HH:mm');
+        break;
+      case 'dhuhr':
+        nextPrayerTime = moment(dhurPrayer, 'HH:mm');
+        break;
+      case 'asr':
+        nextPrayerTime = moment(asrPrayer, 'HH:mm');
+        break;
+      case 'maghrib':
+        nextPrayerTime = moment(maghribPrayer, 'HH:mm');
+        break;
+      case 'isha':
+        nextPrayerTime = moment(ishaPrayer, 'HH:mm');
+        break;
+      default:
+        return;
+    }
+
+    if (nextPrayerTime.isBefore(currentTime)) {
+      nextPrayerTime.add(1, 'days');
+    }
+
+    const duration = moment.duration(nextPrayerTime.diff(currentTime));
+    const hours = Math.floor(duration.asHours());
+    const minutes = duration.minutes();
+    console.log(hours, minutes)
+
+    setTimeUntilNextPrayerHrs(hours);
+    setTimeUntilNextPrayerMin(minutes);
+  };
 
   useEffect(() => {
     getDate();
@@ -267,61 +311,81 @@ function App() {
               </div>
 
               <div className="prayers">
-                <div className="fajr">
-                  <div>FAJR</div>
-                  <div className="fajrTime">
+
+                <div className={nextPrayer == 'fajr'? 'upcomingPrayer' : 'prayerContainer'}>
+
+                  <div className={nextPrayer == 'fajr'? 'prayerName1' : 'prayerName'}>FAJR</div>
+
+                  <div className={nextPrayer == 'fajr'? 'athanTime1' : 'athanTime'}>
                     {fajrAthan}
                     <span className="am">AM</span>
                   </div>
-                  <div className="fajrTime">
+
+                  <div className={nextPrayer == 'fajr'? 'prayerTimer1' : 'prayerTimer'}>
                     {fajrPrayer}
                     <span className="am">AM</span>
                   </div>
+                  
                 </div>
 
-                <div className="fajr">
-                  <div>DHUHR</div>
-                  <div className="fajrTime">
+                <div className={nextPrayer == 'dhuhr'? 'upcomingPrayer' : 'prayerContainer'}>
+                  
+                  <div className={nextPrayer == 'dhuhr'? 'prayerName1' : 'prayerName'}>DHUHR</div>
+
+                  <div className={nextPrayer == 'dhuhr'? 'athanTime1' : 'athanTime'}>
                     {dhurAthan}
                     <span className="am">PM</span>
                   </div>
-                  <div className="fajrTime">
+
+                  <div className={nextPrayer == 'dhuhr'? 'prayerTimer1' : 'prayerTimer'}>
                     {dhurPrayer}
                     <span className="am">PM</span>
+                  
                   </div>
                 </div>
 
-                <div className="fajr">
-                  <div>ASR</div>
-                  <div className="fajrTime">
+                <div className={nextPrayer == 'asr'? 'upcomingPrayer' : 'prayerContainer'}>
+
+                  <div className={nextPrayer == 'asr'? 'prayerName1' : 'prayerName'}>ASR</div>
+
+                  <div className={nextPrayer == 'asr'? 'athanTime1' : 'athanTime'}>
                     {asrAthan}
                     <span className="am">PM</span>
                   </div>
-                  <div className="fajrTime">
+
+                  <div className={nextPrayer == 'asr'? 'prayerTimer1' : 'prayerTimer'}>
                     {asrPrayer}
                     <span className="am">PM</span>
                   </div>
+
                 </div>
 
-                <div className="fajr">
-                  <div>MAGHRIB</div>
-                  <div className="fajrTime">
+                <div className={nextPrayer== 'maghrib'? 'upcomingPrayer' : 'prayerContainer'}>
+
+                  <div className={nextPrayer == 'maghrib'? 'prayerName1' : 'prayerName'}>MAGHRIB</div>
+
+                  <div className={nextPrayer == 'maghrib'? 'athanTime1' : 'athanTime'}>
                     {maghribAthan}
                     <span className="am">PM</span>
                   </div>
-                  <div className="fajrTime">
+
+                  <div className={nextPrayer == 'maghrib'? 'prayerTimer1' : 'prayerTimer'}>
                     {maghribAthan}
                     <span className="am">PM</span>
                   </div>
+
                 </div>
 
-                <div className="fajr">
-                  <div>ISHA</div>
-                  <div className="fajrTime">
+                <div className={nextPrayer == 'isha'? 'upcomingPrayer' : 'prayerContainer'}>
+
+                  <div className={nextPrayer == 'isha'? 'prayerName1' : 'prayerName'}>ISHA</div>
+
+                  <div className={nextPrayer == 'isha'? 'athanTime1' : 'athanTime'}>
                     {ishaAthan}
                     <span className="am">PM</span>
                   </div>
-                  <div className="fajrTime">
+
+                  <div className={nextPrayer == 'isha'? 'prayerTimer1' : 'prayerTimer'}>
                     {ishaPrayer}
                     <span className="am">PM</span>
                   </div>
@@ -341,7 +405,6 @@ function App() {
           <div className="arabicDate">
             {currentHijriYear}-{currentHijriDay}-{currentHijriMonth}
           </div>
-          {/*get hijri date does not display anything anymore*/}
           <div className="englishDate">{momentDate}</div>
           <div className="line"></div>
         </div>
@@ -350,15 +413,15 @@ function App() {
             <div className="bigTime">{bigTime}</div>
             <span className="pm">PM</span>
           </div>
-          <div className="dhuhrIqamah">
-            DHUHR IQAMAH
+          <div className="nextIqamah">
+            {nextPrayer} IQAMAH
             <div className="iqamahTime">
               <div className="ten">
-                10
+                {timeUntilNextPrayerHrs}
                 <span className="am2">HR</span>
               </div>
               <div className="thirtyFive">
-                35
+                {timeUntilNextPrayerMin}
                 <span className="am2">MIN</span>
               </div>
             </div>
@@ -399,7 +462,7 @@ function App() {
             </div>
           </div>
         </div>
-        <div className="ishraq">ISHRAQ 6:26</div>
+        <div className="ishraq">ISHRAQ {shuruq}</div>
       </div>
     </div>
   );
