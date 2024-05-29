@@ -283,7 +283,6 @@ function App() {
                 <div className="header2Text"> TODAY'S MESSAGE</div>
               </div>
               <div className="message">
-                
                 {announcements
                     ? announcements.map((announcement, index) => (
                       <div>{announcement}</div>
