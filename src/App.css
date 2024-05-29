@@ -217,6 +217,7 @@
 .message2 {
   width: 350px;
   height: 200px;
+  max-height: 200px; 
   background-color: #00003e;
   display: flex;
   color: white;
@@ -227,10 +228,9 @@
 .message {
   width: 350px;
   height: 200px;
+  max-height: 200px;
   background-color: #00003e;
-
-  display: flex;
-  font-size: 20px;
+  font-size: 23px;
   text-align: center;
   color: white;
 }

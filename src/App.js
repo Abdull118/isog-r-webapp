@@ -282,14 +282,22 @@ function App() {
               <div className="header2">
                 <div className="header2Text"> TODAY'S MESSAGE</div>
               </div>
-              <div className="message">{announcements}</div>
+              <div className="message">
+                
+                {announcements
+                    ? announcements.map((announcement, index) => (
+                      <div>{announcement}</div>
+                      ))
+                    : null}
+                </div>
             </div>
 
             <div>
               <div className="header3">
                 <div className="header3Text"> HADITH OF THE DAY</div>
               </div>
-              <div className="message2">{hadith}</div>
+              <div className="message2">
+                <div>{hadith}</div></div>
             </div>
           </div>
 
