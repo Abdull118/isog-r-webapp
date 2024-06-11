@@ -193,7 +193,7 @@ function App() {
     if (bigTime && nextPrayer) {
       calculateTimeUntilNextPrayer();
     }
-  }, [bigTime, nextPrayer, fajrPrayer, dhurPrayer, asrPrayer, maghribPrayer, ishaPrayer]);
+  }, [bigTime, nextPrayer, fajrPrayer, dhurPrayer, asrPrayer, maghribAthan, ishaPrayer]);
 
   const calculateTimeUntilNextPrayer = () => {
     const currentTime = moment(bigTime, 'HH:mm');
@@ -210,7 +210,7 @@ function App() {
         nextPrayerTime = moment(asrPrayer, 'HH:mm');
         break;
       case 'maghrib':
-        nextPrayerTime = moment(maghribPrayer, 'HH:mm');
+        nextPrayerTime = moment(maghribAthan, 'HH:mm');
         break;
       case 'isha':
         nextPrayerTime = moment(ishaPrayer, 'HH:mm');
