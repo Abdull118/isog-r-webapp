@@ -455,7 +455,7 @@ function App() {
               <div className="vector">
                 <img src={vector} />
               </div>
-              05:30
+              {fajrAthan}
               <span className="am4">AM</span>
               <div className="suhoorIftar">SUHOOR</div>
             </div>
@@ -463,7 +463,7 @@ function App() {
               <div className="vector">
                 <img src={cloud} />
               </div>
-              8:50
+              {maghribAthan}
               <span className="am4">PM</span>
               <div className="suhoorIftar">IFTAR</div>
             </div>
