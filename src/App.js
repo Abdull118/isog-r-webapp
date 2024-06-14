@@ -9,6 +9,8 @@ import cloud from "./assests/images/cloud.png";
 // use effect comes last
 function App() {
   const [bigTime, setBigTime] = useState();
+  const [message, setMessage] = useState();
+  const [messageHeader, setMessageHeader] = useState();
   const [fajrAthan, setFajrAthan] = useState();
   const [dhurAthan, setDhurAthan] = useState();
   const [asrAthan, setAsrAthan] = useState();
@@ -171,7 +173,7 @@ function App() {
 
   const momentGetDate = () => {
     setMomentDate(moment().format("ddd MMMM D, YYYY"));
-  };
+};
 
   const [announcements, setAnnouncements] = useState([]);
 
@@ -226,11 +228,27 @@ function App() {
     const duration = moment.duration(nextPrayerTime.diff(currentTime));
     const hours = Math.floor(duration.asHours());
     const minutes = duration.minutes();
-    console.log(hours, minutes)
+    
 
     setTimeUntilNextPrayerHrs(hours);
     setTimeUntilNextPrayerMin(minutes);
   };
+
+ 
+ function nigeria() {
+  setMessage((prevMessage) =>{
+    if (prevMessage === announcements){
+      setMessageHeader("Hadith")
+      return hadith
+    } 
+    else if (prevMessage === hadith){
+      setMessageHeader("Today's Message")
+      return announcements
+    }
+  })
+}
+
+
 
   useEffect(() => {
     getDate();
@@ -259,6 +277,16 @@ function App() {
     }, 1800000);
   }, []);
 
+useEffect(() => {
+  nigeria()
+  setMessage(announcements)
+  setMessageHeader("Today's Message")
+  const interval = setInterval(nigeria, 180000)
+  console.log(message)
+  return()=> clearInterval(interval)
+  
+},[announcements, hadith]);
+
   return (
     <div className="App">
       <div>
@@ -280,24 +308,14 @@ function App() {
           <div className="Boxes">
             <div>
               <div className="header2">
-                <div className="header2Text"> TODAY'S MESSAGE</div>
+                <div className="header2Text"> {messageHeader} </div>
               </div>
               <div className="message">
-                {announcements
-                    ? announcements.map((announcement, index) => (
-                      <div>{announcement}</div>
-                      ))
-                    : null}
+                {message}
                 </div>
             </div>
 
-            <div>
-              <div className="header3">
-                <div className="header3Text"> HADITH OF THE DAY</div>
-              </div>
-              <div className="message2">
-                <div>{hadith}</div></div>
-            </div>
+            
           </div>
 
           <div className="skinnyBoxes">
