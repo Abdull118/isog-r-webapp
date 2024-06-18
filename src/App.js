@@ -259,7 +259,11 @@ function App() {
   function messageSwapper() {
     setMessage((prevMessage) => {
       if (prevMessage === announcements) {
-        setMessageHeader("Hadith");
+        if(messageHeader == "Today's Message"){
+          setMessageHeader("Hadith");
+        }else{
+          setMessageHeader("Today's Message")
+        }
         return hadith;
       } else if (prevMessage === hadith) {
         setMessageHeader("Today's Message");
@@ -348,7 +352,6 @@ function App() {
   useEffect(() => {
     messageSwapper();
     setMessage(announcements);
-    setMessageHeader("Today's Message");
     const interval = setInterval(messageSwapper, 120000);
     console.log(message);
     return () => clearInterval(interval);
@@ -372,9 +375,6 @@ function App() {
 
           return () => clearTimeout(twoMinuteTimeout);
       };
-      
-      
-
     startIntervals();
 }, []);
 
