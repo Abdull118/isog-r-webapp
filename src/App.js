@@ -358,26 +358,26 @@ function App() {
     return () => clearInterval(interval);
   }, [announcements, hadith]);
 
-  // useEffect(() => {
-  //   const startIntervals = () => {
-  //         setHadithPage(true);
-  //         setMainPage(false);
+  useEffect(() => {
+    const startIntervals = () => {
+          setHadithPage(true);
+          setMainPage(false);
 
-  //         const twoMinuteTimeout = setTimeout(() => {
-  //             setHadithPage(false);
-  //             setMainPage(true);
+          const twoMinuteTimeout = setTimeout(() => {
+              setHadithPage(false);
+              setMainPage(true);
 
-  //             const sixMinuteTimeout = setTimeout(() => {
-  //                 startIntervals();
-  //             }, 6 * 60 * 1000); // 6 minutes after hadith page is hidden
+              const sixMinuteTimeout = setTimeout(() => {
+                  startIntervals();
+              }, 6 * 60 * 1000); // 6 minutes after hadith page is hidden
 
-  //             return () => clearTimeout(sixMinuteTimeout);
-  //         }, 2 * 60 * 1000); // 2 minutes for showing hadith page
+              return () => clearTimeout(sixMinuteTimeout);
+          }, 2 * 60 * 1000); // 2 minutes for showing hadith page
 
-  //         return () => clearTimeout(twoMinuteTimeout);
-  //     };
-  //   startIntervals();
-  // }, []);
+          return () => clearTimeout(twoMinuteTimeout);
+      };
+    startIntervals();
+  }, []);
 
   return (
     <>
