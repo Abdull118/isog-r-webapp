@@ -213,7 +213,7 @@ function App() {
   ]);
 
   const calculateTimeUntilNextPrayer = () => {
-    const currentTime = moment(clock, "HH:mm A");
+    const currentTime = moment(clock, "h:mm A");
     let nextPrayerTime;
 
     switch (nextPrayer) {
@@ -230,7 +230,7 @@ function App() {
         nextPrayerTime = moment(maghribAthan, "HH:mm A");
         break;
       case "isha":
-        nextPrayerTime = moment(ishaPrayer + " PM", "HH:mm A");
+        nextPrayerTime = moment(ishaPrayer, "h:mm A");
         break;
       default:
         return;
@@ -254,6 +254,7 @@ function App() {
 
     setTimeUntilNextPrayerHrs(hours);
     setTimeUntilNextPrayerMin(minutes);
+    console.log(moment().format('h:mm A'), nextPrayerTime)
   };
 
   function messageSwapper() {
@@ -357,26 +358,26 @@ function App() {
     return () => clearInterval(interval);
   }, [announcements, hadith]);
 
-  useEffect(() => {
-    const startIntervals = () => {
-          setHadithPage(true);
-          setMainPage(false);
+  // useEffect(() => {
+  //   const startIntervals = () => {
+  //         setHadithPage(true);
+  //         setMainPage(false);
 
-          const twoMinuteTimeout = setTimeout(() => {
-              setHadithPage(false);
-              setMainPage(true);
+  //         const twoMinuteTimeout = setTimeout(() => {
+  //             setHadithPage(false);
+  //             setMainPage(true);
 
-              const sixMinuteTimeout = setTimeout(() => {
-                  startIntervals();
-              }, 6 * 60 * 1000); // 6 minutes after hadith page is hidden
+  //             const sixMinuteTimeout = setTimeout(() => {
+  //                 startIntervals();
+  //             }, 6 * 60 * 1000); // 6 minutes after hadith page is hidden
 
-              return () => clearTimeout(sixMinuteTimeout);
-          }, 2 * 60 * 1000); // 2 minutes for showing hadith page
+  //             return () => clearTimeout(sixMinuteTimeout);
+  //         }, 2 * 60 * 1000); // 2 minutes for showing hadith page
 
-          return () => clearTimeout(twoMinuteTimeout);
-      };
-    startIntervals();
-}, []);
+  //         return () => clearTimeout(twoMinuteTimeout);
+  //     };
+  //   startIntervals();
+  // }, []);
 
   return (
     <>
