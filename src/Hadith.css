@@ -1,0 +1,38 @@
+.hadithContainerRoot{
+    width: 945px;
+    height: 527px;
+    background: url('./assests/images/grayBackground.webp') no-repeat;
+    background-size: cover;
+    object-fit: contain;
+
+
+}
+.hadithContainer{   
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    text-align: center;
+    align-items: center;
+}
+
+.bismala{
+    font-family: "Jomhuria";
+    text-align: center;
+    color: #00003E; 
+    font-size: 50px;
+    margin-bottom: -60px;
+}
+
+.hadith{
+    font-size: 35px;
+    color: rgba(39, 83, 163, 1);
+    font-family: "Inknut Antiqua";
+    line-height: 120%;
+}
+
+.hadithISOGLogo{
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    opacity: 0.7;
+}

@@ -5,9 +5,17 @@ import moment from "moment/moment";
 import isogLogo from "./assests/images/isog.png";
 import vector from "./assests/images/Vector.png";
 import cloud from "./assests/images/cloud.png";
+import Hadith from "./Hadith";
+import Countdown from "./Countdown";
 
 // use effect comes last
 function App() {
+  const [mainPage, setMainPage] = useState(false)
+  const [hadithPage, setHadithPage] = useState(false)
+  const [countDownPage, setCountDownPage] = useState(true)
+  const [countDownSeconds, setCountDownSeconds] = useState(0);
+  const [countDownAthan, setCountDownAthan] = useState();
+
   const [clock, setClock] = useState();
   const [clockAP, setClockAP] = useState();
   const [message, setMessage] = useState();
@@ -248,7 +256,7 @@ function App() {
     setTimeUntilNextPrayerMin(minutes);
   };
 
-  function nigeria() {
+  function messageSwapper() {
     setMessage((prevMessage) => {
       if (prevMessage === announcements) {
         setMessageHeader("Hadith");
@@ -259,6 +267,56 @@ function App() {
       }
     });
   }
+//   const [testAthanTime, setTestAthanTime] = useState('');
+
+//   const checkForAthan = () => {
+//     const currentTime = new Date();
+//     const athanTimes = [
+//         { name: 'Fajr', time: fajrAthan },
+//         { name: 'Dhuhr', time: dhurAthan },
+//         { name: 'Asr', time: asrAthan },
+//         { name: 'Maghrib', time: maghribAthan },
+//         { name: 'Isha', time: ishaAthan }
+//     ];
+
+//     athanTimes.forEach(({ name, time }) => {
+//         if (time) {
+//             // const athanDate = new Date(`1970-01-01T${convertTo24Hour(time)}:00Z`);
+//             const athanDate = new Date(testAthanTime);
+//             const timeDifference = (athanDate - currentTime) / 1000;
+
+//             if (timeDifference <= 60 && timeDifference > 0) {
+
+//                 setCountDownPage(true);
+//                 setMainPage(false)
+//                 setCountDownAthan(name);
+
+//                 let seconds = 59;
+//                 const countdownInterval = setInterval(() => {
+//                     setCountDownSeconds(seconds);
+//                     seconds -= 1;
+//                     if (seconds < 0) {
+//                         clearInterval(countdownInterval);
+//                         setCountDownPage(false);
+//                         setMainPage(true)
+//                     }
+//                 }, 1000);
+//             }
+//         }
+//     });
+// };
+
+
+//   useEffect(() => {
+//     const athanCheckInterval = setInterval(checkForAthan, 1000);
+//     return () => clearInterval(athanCheckInterval);
+//   }, [fajrAthan, dhurAthan, asrAthan, maghribAthan, ishaAthan, testAthanTime]);
+
+//   useEffect(() => {
+//     const currentTime = new Date();
+//     const testTime = new Date(currentTime.getTime() + 2 * 60 * 1000); // 2 minutes from now
+//     setTestAthanTime(testTime);
+// }, []);
 
   useEffect(() => {
     getDate();
@@ -288,299 +346,342 @@ function App() {
   }, []);
 
   useEffect(() => {
-    nigeria();
+    messageSwapper();
     setMessage(announcements);
     setMessageHeader("Today's Message");
-    const interval = setInterval(nigeria, 180000);
+    const interval = setInterval(messageSwapper, 120000);
     console.log(message);
     return () => clearInterval(interval);
   }, [announcements, hadith]);
 
+  useEffect(() => {
+    const startIntervals = () => {
+          setHadithPage(true);
+          setMainPage(false);
+
+          const twoMinuteTimeout = setTimeout(() => {
+              setHadithPage(false);
+              setMainPage(true);
+
+              const sixMinuteTimeout = setTimeout(() => {
+                  startIntervals();
+              }, 6 * 60 * 1000); // 6 minutes after hadith page is hidden
+
+              return () => clearTimeout(sixMinuteTimeout);
+          }, 2 * 60 * 1000); // 2 minutes for showing hadith page
+
+          return () => clearTimeout(twoMinuteTimeout);
+      };
+      
+      
+
+    startIntervals();
+}, []);
+
   return (
-    <div className="App">
-      <div>
-        <div className="bigHeader">
-          <div className="headerPart1">
-            <div className="isogLogo">
-              <img src={isogLogo} />
+    <>
+    {mainPage &&(
+      <div className="App">
+        <div>
+          <div className="bigHeader">
+            <div className="headerPart1">
+              <div className="isogLogo">
+                <img src={isogLogo} />
+              </div>
+
+              <div className="isogText">Islamic Society of Guelph</div>
             </div>
 
-            <div className="isogText">Islamic Society of Guelph</div>
+            <div className="headerPart2">
+              <div className="headerFont">مسجد أبو بكر الصديق</div>
+              <div className="headerFont2">www.ISOFG.ca</div>
+            </div>
           </div>
+          <div className="skinnySections">
+            <div className="Boxes">
+              <div>
+                <div className="header2">
+                  <div className="header2Text"> {messageHeader} </div>
+                </div>
+                <div className="message">
+                  {Array.isArray(message) ? (
+                    message.map((item, index) => <div key={index}>{item}</div>)
+                  ) : (
+                    <div>{message}</div>
+                  )}
+                </div>
+              </div>
+            </div>
 
-          <div className="headerPart2">
-            <div className="headerFont">مسجد أبو بكر الصديق</div>
-            <div className="headerFont2">www.ISOFG.ca</div>
+            <div className="skinnyBoxes">
+              <div className="donateBox">
+                <div className="donateText">DONATE TO YOUR MASJID</div>
+              </div>
+
+              <div className="silenceBox">
+                <div className="silenceText">SILENCE YOUR PHONE</div>
+              </div>
+            </div>
+
+            <div className="bigPrayerSection">
+              <div className="longBlue">
+                <div className="startIqamah">
+                  <div className="start">START</div>
+                  <div className="iqamah">IQAMAH</div>
+                </div>
+
+                <div className="prayers">
+                  <div
+                    className={
+                      nextPrayer == "fajr" ? "upcomingPrayer" : "prayerContainer"
+                    }
+                  >
+                    <div
+                      className={
+                        nextPrayer == "fajr" ? "prayerName1" : "prayerName"
+                      }
+                    >
+                      FAJR
+                    </div>
+
+                    <div
+                      className={
+                        nextPrayer == "fajr" ? "athanTime1" : "athanTime"
+                      }
+                    >
+                      {fajrAthan}
+                      <span className="am">AM</span>
+                    </div>
+
+                    <div
+                      className={
+                        nextPrayer == "fajr" ? "prayerTimer1" : "prayerTimer"
+                      }
+                    >
+                      {fajrPrayer}
+                      <span className="am">AM</span>
+                    </div>
+                  </div>
+
+                  <div
+                    className={
+                      nextPrayer == "dhuhr" ? "upcomingPrayer" : "prayerContainer"
+                    }
+                  >
+                    <div
+                      className={
+                        nextPrayer == "dhuhr" ? "prayerName1" : "prayerName"
+                      }
+                    >
+                      DHUHR
+                    </div>
+
+                    <div
+                      className={
+                        nextPrayer == "dhuhr" ? "athanTime1" : "athanTime"
+                      }
+                    >
+                      {dhurAthan}
+                      <span className="am">PM</span>
+                    </div>
+
+                    <div
+                      className={
+                        nextPrayer == "dhuhr" ? "prayerTimer1" : "prayerTimer"
+                      }
+                    >
+                      {dhurPrayer}
+                      <span className="am">PM</span>
+                    </div>
+                  </div>
+
+                  <div
+                    className={
+                      nextPrayer == "asr" ? "upcomingPrayer" : "prayerContainer"
+                    }
+                  >
+                    <div
+                      className={
+                        nextPrayer == "asr" ? "prayerName1" : "prayerName"
+                      }
+                    >
+                      ASR
+                    </div>
+
+                    <div
+                      className={nextPrayer == "asr" ? "athanTime1" : "athanTime"}
+                    >
+                      {asrAthan}
+                      <span className="am">PM</span>
+                    </div>
+
+                    <div
+                      className={
+                        nextPrayer == "asr" ? "prayerTimer1" : "prayerTimer"
+                      }
+                    >
+                      {asrPrayer}
+                      <span className="am">PM</span>
+                    </div>
+                  </div>
+
+                  <div
+                    className={
+                      nextPrayer == "maghrib"
+                        ? "upcomingPrayer"
+                        : "prayerContainer"
+                    }
+                  >
+                    <div
+                      className={
+                        nextPrayer == "maghrib" ? "prayerName1" : "prayerName"
+                      }
+                    >
+                      MAGHRIB
+                    </div>
+
+                    <div
+                      className={
+                        nextPrayer == "maghrib" ? "athanTime1" : "athanTime"
+                      }
+                    >
+                      {maghribAthan}
+                      <span className="am">PM</span>
+                    </div>
+
+                    <div
+                      className={
+                        nextPrayer == "maghrib" ? "prayerTimer1" : "prayerTimer"
+                      }
+                    >
+                      {maghribAthan}
+                      <span className="am">PM</span>
+                    </div>
+                  </div>
+
+                  <div
+                    className={
+                      nextPrayer == "isha" ? "upcomingPrayer" : "prayerContainer"
+                    }
+                  >
+                    <div
+                      className={
+                        nextPrayer == "isha" ? "prayerName1" : "prayerName"
+                      }
+                    >
+                      ISHA
+                    </div>
+
+                    <div
+                      className={
+                        nextPrayer == "isha" ? "athanTime1" : "athanTime"
+                      }
+                    >
+                      {ishaAthan}
+                      <span className="am">PM</span>
+                    </div>
+
+                    <div
+                      className={
+                        nextPrayer == "isha" ? "prayerTimer1" : "prayerTimer"
+                      }
+                    >
+                      {ishaPrayer}
+                      <span className="am">PM</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div className="quranContainer">
+            <div className="quran">
+              Quran Classes For All Ages - Contact Imam (226)-505-7435
+            </div>
           </div>
         </div>
-        <div className="skinnySections">
-          <div className="Boxes">
-            <div>
-              <div className="header2">
-                <div className="header2Text"> {messageHeader} </div>
-              </div>
-              <div className="message">
-                {Array.isArray(message) ? (
-                  message.map((item, index) => <div key={index}>{item}</div>)
-                ) : (
-                  <div>{message}</div>
-                )}
-              </div>
+        <div className="rightSide">
+          <div className="dates">
+            <div className="arabicDate">
+              {currentHijriYear}-{currentHijriDay}-{currentHijriMonth}
             </div>
+            <div className="englishDate">{momentDate}</div>
+            <div className="line"></div>
           </div>
-
-          <div className="skinnyBoxes">
-            <div className="donateBox">
-              <div className="donateText">DONATE TO YOUR MASJID</div>
+          <div className="rightBox">
+            <div className="clock">
+              <div className="bigTime">{clock}</div>
+              <span className="pm">{clockAP}</span>
             </div>
-
-            <div className="silenceBox">
-              <div className="silenceText">SILENCE YOUR PHONE</div>
-            </div>
-          </div>
-
-          <div className="bigPrayerSection">
-            <div className="longBlue">
-              <div className="startIqamah">
-                <div className="start">START</div>
-                <div className="iqamah">IQAMAH</div>
-              </div>
-
-              <div className="prayers">
-                <div
-                  className={
-                    nextPrayer == "fajr" ? "upcomingPrayer" : "prayerContainer"
-                  }
-                >
-                  <div
-                    className={
-                      nextPrayer == "fajr" ? "prayerName1" : "prayerName"
-                    }
-                  >
-                    FAJR
-                  </div>
-
-                  <div
-                    className={
-                      nextPrayer == "fajr" ? "athanTime1" : "athanTime"
-                    }
-                  >
-                    {fajrAthan}
-                    <span className="am">AM</span>
-                  </div>
-
-                  <div
-                    className={
-                      nextPrayer == "fajr" ? "prayerTimer1" : "prayerTimer"
-                    }
-                  >
-                    {fajrPrayer}
-                    <span className="am">AM</span>
-                  </div>
+            <div className="nextIqamah">
+              {nextPrayer} IQAMAH
+              <div className="iqamahTime">
+                <div className="ten">
+                  {timeUntilNextPrayerHrs}
+                  <span className="am2">HR</span>
                 </div>
-
-                <div
-                  className={
-                    nextPrayer == "dhuhr" ? "upcomingPrayer" : "prayerContainer"
-                  }
-                >
-                  <div
-                    className={
-                      nextPrayer == "dhuhr" ? "prayerName1" : "prayerName"
-                    }
-                  >
-                    DHUHR
-                  </div>
-
-                  <div
-                    className={
-                      nextPrayer == "dhuhr" ? "athanTime1" : "athanTime"
-                    }
-                  >
-                    {dhurAthan}
-                    <span className="am">PM</span>
-                  </div>
-
-                  <div
-                    className={
-                      nextPrayer == "dhuhr" ? "prayerTimer1" : "prayerTimer"
-                    }
-                  >
-                    {dhurPrayer}
-                    <span className="am">PM</span>
-                  </div>
-                </div>
-
-                <div
-                  className={
-                    nextPrayer == "asr" ? "upcomingPrayer" : "prayerContainer"
-                  }
-                >
-                  <div
-                    className={
-                      nextPrayer == "asr" ? "prayerName1" : "prayerName"
-                    }
-                  >
-                    ASR
-                  </div>
-
-                  <div
-                    className={nextPrayer == "asr" ? "athanTime1" : "athanTime"}
-                  >
-                    {asrAthan}
-                    <span className="am">PM</span>
-                  </div>
-
-                  <div
-                    className={
-                      nextPrayer == "asr" ? "prayerTimer1" : "prayerTimer"
-                    }
-                  >
-                    {asrPrayer}
-                    <span className="am">PM</span>
-                  </div>
-                </div>
-
-                <div
-                  className={
-                    nextPrayer == "maghrib"
-                      ? "upcomingPrayer"
-                      : "prayerContainer"
-                  }
-                >
-                  <div
-                    className={
-                      nextPrayer == "maghrib" ? "prayerName1" : "prayerName"
-                    }
-                  >
-                    MAGHRIB
-                  </div>
-
-                  <div
-                    className={
-                      nextPrayer == "maghrib" ? "athanTime1" : "athanTime"
-                    }
-                  >
-                    {maghribAthan}
-                    <span className="am">PM</span>
-                  </div>
-
-                  <div
-                    className={
-                      nextPrayer == "maghrib" ? "prayerTimer1" : "prayerTimer"
-                    }
-                  >
-                    {maghribAthan}
-                    <span className="am">PM</span>
-                  </div>
-                </div>
-
-                <div
-                  className={
-                    nextPrayer == "isha" ? "upcomingPrayer" : "prayerContainer"
-                  }
-                >
-                  <div
-                    className={
-                      nextPrayer == "isha" ? "prayerName1" : "prayerName"
-                    }
-                  >
-                    ISHA
-                  </div>
-
-                  <div
-                    className={
-                      nextPrayer == "isha" ? "athanTime1" : "athanTime"
-                    }
-                  >
-                    {ishaAthan}
-                    <span className="am">PM</span>
-                  </div>
-
-                  <div
-                    className={
-                      nextPrayer == "isha" ? "prayerTimer1" : "prayerTimer"
-                    }
-                  >
-                    {ishaPrayer}
-                    <span className="am">PM</span>
-                  </div>
+                <div className="thirtyFive">
+                  {timeUntilNextPrayerMin}
+                  <span className="am2">MIN</span>
                 </div>
               </div>
             </div>
+            <div className="line2"></div>
           </div>
-        </div>
-        <div className="quranContainer">
-          <div className="quran">
-            Quran Classes For All Ages - Contact Imam (226)-505-7435
+          <div className="bottomRight">
+            <div className="jumuahHeader">JUMU'AH</div>
+            <div className="startTime">
+              <div className="time">
+                1:30
+                <span className="am3">PM</span>
+                <div className="starts">STARTS</div>
+              </div>
+              <div className="time">
+                1:50
+                <span className="am3">PM</span>
+                <div className="starts">JUMU'AH</div>
+              </div>
+            </div>
+
+            <div className="ramadanFooter">
+              <div className="time2">
+                <div className="vector">
+                  <img src={vector} />
+                </div>
+                {fajrAthan}
+                <span className="am4">AM</span>
+                <div className="suhoorIftar">SUHOOR</div>
+              </div>
+              <div className="time2">
+                <div className="vector">
+                  <img src={cloud} />
+                </div>
+                {maghribAthan}
+                <span className="am4">PM</span>
+                <div className="suhoorIftar">IFTAR</div>
+              </div>
+            </div>
           </div>
+          <div className="ishraq">ISHRAQ {shuruq}</div>
         </div>
       </div>
-      <div className="rightSide">
-        <div className="dates">
-          <div className="arabicDate">
-            {currentHijriYear}-{currentHijriDay}-{currentHijriMonth}
-          </div>
-          <div className="englishDate">{momentDate}</div>
-          <div className="line"></div>
-        </div>
-        <div className="rightBox">
-          <div className="clock">
-            <div className="bigTime">{clock}</div>
-            <span className="pm">{clockAP}</span>
-          </div>
-          <div className="nextIqamah">
-            {nextPrayer} IQAMAH
-            <div className="iqamahTime">
-              <div className="ten">
-                {timeUntilNextPrayerHrs}
-                <span className="am2">HR</span>
-              </div>
-              <div className="thirtyFive">
-                {timeUntilNextPrayerMin}
-                <span className="am2">MIN</span>
-              </div>
-            </div>
-          </div>
-          <div className="line2"></div>
-        </div>
-        <div className="bottomRight">
-          <div className="jumuahHeader">JUMU'AH</div>
-          <div className="startTime">
-            <div className="time">
-              1:30
-              <span className="am3">PM</span>
-              <div className="starts">STARTS</div>
-            </div>
-            <div className="time">
-              1:50
-              <span className="am3">PM</span>
-              <div className="starts">JUMU'AH</div>
-            </div>
-          </div>
+    )}
 
-          <div className="ramadanFooter">
-            <div className="time2">
-              <div className="vector">
-                <img src={vector} />
-              </div>
-              {fajrAthan}
-              <span className="am4">AM</span>
-              <div className="suhoorIftar">SUHOOR</div>
-            </div>
-            <div className="time2">
-              <div className="vector">
-                <img src={cloud} />
-              </div>
-              {maghribAthan}
-              <span className="am4">PM</span>
-              <div className="suhoorIftar">IFTAR</div>
-            </div>
-          </div>
-        </div>
-        <div className="ishraq">ISHRAQ {shuruq}</div>
-      </div>
-    </div>
+    {hadithPage &&(
+      <Hadith />
+    )}
+
+    {countDownPage &&(
+      <Countdown 
+      countDownSeconds={countDownSeconds} 
+      countDownAthan={countDownAthan}
+      setMainPage={setMainPage}
+      setCountDownPage={setCountDownPage}
+      />
+    )}
+      
+    
+    </>
   );
 }
 
