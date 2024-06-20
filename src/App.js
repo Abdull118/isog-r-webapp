@@ -10,21 +10,28 @@ import Countdown from "./Countdown";
 
 // use effect comes last
 function App() {
-  const [mainPage, setMainPage] = useState(false)
+  const [mainPage, setMainPage] = useState(true)
   const [hadithPage, setHadithPage] = useState(false)
-  const [countDownPage, setCountDownPage] = useState(true)
-  const [countDownSeconds, setCountDownSeconds] = useState(0);
+  const [countDownPage, setCountDownPage] = useState(false)
+
   const [countDownAthan, setCountDownAthan] = useState();
 
   const [clock, setClock] = useState();
   const [clockAP, setClockAP] = useState();
   const [message, setMessage] = useState();
   const [messageHeader, setMessageHeader] = useState();
+
   const [fajrAthan, setFajrAthan] = useState();
   const [dhurAthan, setDhurAthan] = useState();
   const [asrAthan, setAsrAthan] = useState();
   const [maghribAthan, setMaghribAthan] = useState();
   const [ishaAthan, setIshaAthan] = useState();
+
+  const [fajrAthan12Hr, setFajrAthan12Hr] = useState();
+  const [dhurAthan12Hr, setDhurAthan12Hr] = useState();
+  const [asrAthan12Hr, setAsrAthan12Hr] = useState();
+  const [maghribAthan12Hr, setMaghribAthan12Hr] = useState();
+  const [ishaAthan12Hr, setIshaAthan12Hr] = useState();
 
   const [fajrPrayer, setFajrPrayer] = useState();
   const [dhurPrayer, setDhurPrayer] = useState();
@@ -76,13 +83,19 @@ function App() {
         `https://api.aladhan.com/v1/timingsByCity?city=Guelph&country=Canada&method=2`
       );
       const json = await response.json();
-      setFajrAthan(convertTo12Hour(json.data.timings.Fajr));
+      setFajrAthan((json.data.timings.Fajr));
       setShuruq(addMinutesToTime(json.data.timings.Sunrise, 15));
-      setDhurAthan(convertTo12Hour(json.data.timings.Dhuhr));
-      setAsrAthan(convertTo12Hour(json.data.timings.Asr));
-      setMaghribAthan(convertTo12Hour(json.data.timings.Maghrib));
-      setIshaAthan(convertTo12Hour(json.data.timings.Isha));
-      convertTo12Hour(json.data.timings.Sunrise);
+      setDhurAthan((json.data.timings.Dhuhr));
+      setAsrAthan((json.data.timings.Asr));
+      setMaghribAthan((json.data.timings.Maghrib));
+      setIshaAthan((json.data.timings.Isha));
+
+      setFajrAthan12Hr(convertTo12Hour(json.data.timings.Fajr));
+      setDhurAthan12Hr(convertTo12Hour(json.data.timings.Dhuhr));
+      setAsrAthan12Hr(convertTo12Hour(json.data.timings.Asr));
+      setMaghribAthan12Hr(convertTo12Hour(json.data.timings.Maghrib));
+      setIshaAthan12Hr(convertTo12Hour(json.data.timings.Isha));
+     
     } catch (error) {
       console.log(error);
     }
@@ -218,16 +231,16 @@ function App() {
 
     switch (nextPrayer) {
       case "fajr":
-        nextPrayerTime = moment(fajrPrayer + " AM", "HH:mm A");
+        nextPrayerTime = moment(fajrPrayer, "h:mm A");
         break;
       case "dhuhr":
-        nextPrayerTime = moment(dhurPrayer + " PM", "HH:mm A");
+        nextPrayerTime = moment(dhurPrayer, "h:mm A");
         break;
       case "asr":
-        nextPrayerTime = moment(asrPrayer + " PM", "HH:mm A");
+        nextPrayerTime = moment(asrPrayer, "h:mm A");
         break;
       case "maghrib":
-        nextPrayerTime = moment(maghribAthan, "HH:mm A");
+        nextPrayerTime = moment(maghribAthan12Hr + ' PM', "h:mm A");
         break;
       case "isha":
         nextPrayerTime = moment(ishaPrayer, "h:mm A");
@@ -254,74 +267,70 @@ function App() {
 
     setTimeUntilNextPrayerHrs(hours);
     setTimeUntilNextPrayerMin(minutes);
-    console.log(moment().format('h:mm A'), nextPrayerTime)
+    console.log(moment().format('h:mm A'), maghribAthan12Hr + ' PM', duration)
   };
 
-  function messageSwapper() {
+  const messageSwapper = () => {
     setMessage((prevMessage) => {
-      if (prevMessage === announcements) {
-        if(messageHeader == "Today's Message"){
-          setMessageHeader("Hadith");
-        }else{
-          setMessageHeader("Today's Message")
+        if (prevMessage === announcements) {
+            setMessageHeader("Hadith");
+            return hadith;
+        } else {
+            setMessageHeader("Today's Message");
+            return announcements;
         }
-        return hadith;
-      } else if (prevMessage === hadith) {
-        setMessageHeader("Today's Message");
-        return announcements;
-      }
     });
-  }
-//   const [testAthanTime, setTestAthanTime] = useState('');
+};
+  
+  const [testAthanTime, setTestAthanTime] = useState('');
 
-//   const checkForAthan = () => {
+  const checkForAthan = () => {
+    const currentTime = new Date();
+    const currentDateString = currentTime.toISOString().split('T')[0]; // Get the current date in YYYY-MM-DD format
+
+    const athanTimes = [
+        { name: 'Fajr', time: fajrAthan },
+        { name: 'Dhuhr', time: dhurAthan },
+        { name: 'Asr', time: asrAthan },
+        { name: 'Maghrib', time: maghribAthan },
+        { name: 'Isha', time: ishaAthan }
+    ];
+
+    athanTimes.forEach(({ name, time }) => {
+        if (time) {
+            // const athanDate = new Date(testAthanTime); // Using testAthanTime for debugging
+            const athanDate = new Date(`${currentDateString}T${time}:00`);
+            const timeDifference = (athanDate - currentTime) / 1000;
+            // console.log('Test Athan Time:', athanDate);
+            // console.log('Current Time:', currentTime);
+            // console.log('Time Difference:', timeDifference);
+
+            if (timeDifference <= 30 && timeDifference > 0) {
+                // console.log('Starting Countdown for:', name);
+                setCountDownPage(true);
+                setMainPage(false);
+                setCountDownAthan(name);
+              }
+          }
+      });
+  };
+
+  const onCountDownComplete = () => {
+      setCountDownPage(false);
+      setMainPage(true);
+  };
+
+  useEffect(() => {
+      const athanCheckInterval = setInterval(checkForAthan, 1000);
+      return () => clearInterval(athanCheckInterval);
+  }, [fajrAthan, dhurAthan, asrAthan, maghribAthan, ishaAthan]);
+
+// useEffect(() => {
 //     const currentTime = new Date();
-//     const athanTimes = [
-//         { name: 'Fajr', time: fajrAthan },
-//         { name: 'Dhuhr', time: dhurAthan },
-//         { name: 'Asr', time: asrAthan },
-//         { name: 'Maghrib', time: maghribAthan },
-//         { name: 'Isha', time: ishaAthan }
-//     ];
-
-//     athanTimes.forEach(({ name, time }) => {
-//         if (time) {
-//             // const athanDate = new Date(`1970-01-01T${convertTo24Hour(time)}:00Z`);
-//             const athanDate = new Date(testAthanTime);
-//             const timeDifference = (athanDate - currentTime) / 1000;
-
-//             if (timeDifference <= 60 && timeDifference > 0) {
-
-//                 setCountDownPage(true);
-//                 setMainPage(false)
-//                 setCountDownAthan(name);
-
-//                 let seconds = 59;
-//                 const countdownInterval = setInterval(() => {
-//                     setCountDownSeconds(seconds);
-//                     seconds -= 1;
-//                     if (seconds < 0) {
-//                         clearInterval(countdownInterval);
-//                         setCountDownPage(false);
-//                         setMainPage(true)
-//                     }
-//                 }, 1000);
-//             }
-//         }
-//     });
-// };
-
-
-//   useEffect(() => {
-//     const athanCheckInterval = setInterval(checkForAthan, 1000);
-//     return () => clearInterval(athanCheckInterval);
-//   }, [fajrAthan, dhurAthan, asrAthan, maghribAthan, ishaAthan, testAthanTime]);
-
-//   useEffect(() => {
-//     const currentTime = new Date();
-//     const testTime = new Date(currentTime.getTime() + 2 * 60 * 1000); // 2 minutes from now
-//     setTestAthanTime(testTime);
+//     const testTime = new Date(currentTime.getTime() + 20000); // 2 minutes from now
+//     setTestAthanTime(testTime.toISOString()); // Convert to ISO string
 // }, []);
+
 
   useEffect(() => {
     getDate();
@@ -351,33 +360,39 @@ function App() {
   }, []);
 
   useEffect(() => {
-    messageSwapper();
-    setMessage(announcements);
     const interval = setInterval(messageSwapper, 120000);
-    console.log(message);
     return () => clearInterval(interval);
   }, [announcements, hadith]);
 
   useEffect(() => {
+      // Ensure the initial message and header are set correctly
+      setMessage(announcements);
+      setMessageHeader("Today's Message");
+  }, [announcements]);
+
+  useEffect(() => {
     const startIntervals = () => {
-          setHadithPage(true);
-          setMainPage(false);
+        setHadithPage(true);
+        setMainPage(false);
 
-          const twoMinuteTimeout = setTimeout(() => {
-              setHadithPage(false);
-              setMainPage(true);
+        const twoMinuteTimeout = setTimeout(() => {
+            setHadithPage(false);
+            setMainPage(true);
 
-              const sixMinuteTimeout = setTimeout(() => {
-                  startIntervals();
+            const sixMinuteTimeout = setTimeout(() => {
+                startIntervals();
               }, 6 * 60 * 1000); // 6 minutes after hadith page is hidden
 
-              return () => clearTimeout(sixMinuteTimeout);
+          return () => clearTimeout(sixMinuteTimeout);
           }, 2 * 60 * 1000); // 2 minutes for showing hadith page
 
           return () => clearTimeout(twoMinuteTimeout);
       };
-    startIntervals();
-  }, []);
+      if(!countDownPage){
+        startIntervals();
+      }
+    
+  }, [countDownPage]);
 
   return (
     <>
@@ -450,7 +465,7 @@ function App() {
                         nextPrayer == "fajr" ? "athanTime1" : "athanTime"
                       }
                     >
-                      {fajrAthan}
+                      {fajrAthan12Hr}
                       <span className="am">AM</span>
                     </div>
 
@@ -482,7 +497,7 @@ function App() {
                         nextPrayer == "dhuhr" ? "athanTime1" : "athanTime"
                       }
                     >
-                      {dhurAthan}
+                      {dhurAthan12Hr}
                       <span className="am">PM</span>
                     </div>
 
@@ -512,7 +527,7 @@ function App() {
                     <div
                       className={nextPrayer == "asr" ? "athanTime1" : "athanTime"}
                     >
-                      {asrAthan}
+                      {asrAthan12Hr}
                       <span className="am">PM</span>
                     </div>
 
@@ -546,7 +561,7 @@ function App() {
                         nextPrayer == "maghrib" ? "athanTime1" : "athanTime"
                       }
                     >
-                      {maghribAthan}
+                      {maghribAthan12Hr}
                       <span className="am">PM</span>
                     </div>
 
@@ -555,7 +570,7 @@ function App() {
                         nextPrayer == "maghrib" ? "prayerTimer1" : "prayerTimer"
                       }
                     >
-                      {maghribAthan}
+                      {maghribAthan12Hr}
                       <span className="am">PM</span>
                     </div>
                   </div>
@@ -578,7 +593,7 @@ function App() {
                         nextPrayer == "isha" ? "athanTime1" : "athanTime"
                       }
                     >
-                      {ishaAthan}
+                      {ishaAthan12Hr}
                       <span className="am">PM</span>
                     </div>
 
@@ -674,10 +689,9 @@ function App() {
 
     {countDownPage &&(
       <Countdown 
-      countDownSeconds={countDownSeconds} 
       countDownAthan={countDownAthan}
       setMainPage={setMainPage}
-      setCountDownPage={setCountDownPage}
+      onCountDownComplete={onCountDownComplete}
       />
     )}
       
