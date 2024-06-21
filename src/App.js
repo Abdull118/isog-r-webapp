@@ -1,7 +1,7 @@
 import logo from "./logo.svg";
 import React, { useEffect, useState } from "react";
 import "./App.css";
-import moment from "moment/moment";
+import moment from 'moment-timezone';
 import isogLogo from "./assests/images/isog.png";
 import vector from "./assests/images/Vector.png";
 import cloud from "./assests/images/cloud.png";
@@ -226,39 +226,36 @@ function App() {
   ]);
 
   const calculateTimeUntilNextPrayer = () => {
-    const currentTime = moment(clock, "h:mm A");
-    let nextPrayerTime;
+    const currentTime = moment.tz("America/New_York");
+    const prayerTimes = {
+      fajr: moment.tz(`${fajrPrayer} AM`, "h:mm A", "America/New_York"),
+      dhuhr: moment.tz(`${dhurPrayer} PM`, "h:mm A", "America/New_York"),
+      asr: moment.tz(`${asrPrayer} PM`, "h:mm A", "America/New_York"),
+      maghrib: moment.tz(`${maghribAthan} PM`, "h:mm A", "America/New_York"),
+      isha: moment.tz(`${ishaPrayer} PM`, "h:mm A", "America/New_York"),
+    };
 
-    switch (nextPrayer) {
-      case "fajr":
-        nextPrayerTime = moment(fajrPrayer, "h:mm A");
-        break;
-      case "dhuhr":
-        nextPrayerTime = moment(dhurPrayer, "h:mm A");
-        break;
-      case "asr":
-        nextPrayerTime = moment(asrPrayer, "h:mm A");
-        break;
-      case "maghrib":
-        nextPrayerTime = moment(maghribAthan12Hr + ' PM', "h:mm A");
-        break;
-      case "isha":
-        nextPrayerTime = moment(ishaPrayer, "h:mm A");
-        break;
-      default:
-        return;
+    // Ensure prayer times are set to the current day
+    for (let prayer in prayerTimes) {
+      prayerTimes[prayer].set({
+        year: currentTime.year(),
+        month: currentTime.month(),
+        date: currentTime.date(),
+      });
     }
 
-    // Set the date of nextPrayerTime to today's date
-    nextPrayerTime.set({
-      year: currentTime.year(),
-      month: currentTime.month(),
-      date: currentTime.date(),
-    });
+    // Find the next prayer time that is after the current time
+    let nextPrayerTime;
+    for (let prayer in prayerTimes) {
+      if (prayerTimes[prayer].isAfter(currentTime)) {
+        nextPrayerTime = prayerTimes[prayer];
+        break;
+      }
+    }
 
-    // If the next prayer time is before the current time, it means the next prayer is the next day
-    if (nextPrayerTime.isBefore(currentTime)) {
-      nextPrayerTime.add(1, "days");
+    // If no prayer time is after the current time, set the next prayer to the first prayer of the next day
+    if (!nextPrayerTime) {
+      nextPrayerTime = prayerTimes.fajr.add(1, 'day');
     }
 
     const duration = moment.duration(nextPrayerTime.diff(currentTime));
@@ -267,7 +264,10 @@ function App() {
 
     setTimeUntilNextPrayerHrs(hours);
     setTimeUntilNextPrayerMin(minutes);
-    console.log(moment().format('h:mm A'), maghribAthan12Hr + ' PM', duration)
+
+    console.log('Current Time (ET):', currentTime.format());
+    console.log('Next Prayer Time (ET):', nextPrayerTime.format());
+    console.log('Time Until Next Prayer (Duration):', `${hours} hours and ${minutes} minutes`);
   };
 
   const messageSwapper = () => {
@@ -285,36 +285,39 @@ function App() {
   const [testAthanTime, setTestAthanTime] = useState('');
 
   const checkForAthan = () => {
-    const currentTime = new Date();
-    const currentDateString = currentTime.toISOString().split('T')[0]; // Get the current date in YYYY-MM-DD format
-
-    const athanTimes = [
-        { name: 'Fajr', time: fajrAthan },
-        { name: 'Dhuhr', time: dhurAthan },
-        { name: 'Asr', time: asrAthan },
-        { name: 'Maghrib', time: maghribAthan },
-        { name: 'Isha', time: ishaAthan }
-    ];
-
-    athanTimes.forEach(({ name, time }) => {
-        if (time) {
-            // const athanDate = new Date(testAthanTime); // Using testAthanTime for debugging
-            const athanDate = new Date(`${currentDateString}T${time}:00`);
-            const timeDifference = (athanDate - currentTime) / 1000;
-            // console.log('Test Athan Time:', athanDate);
-            // console.log('Current Time:', currentTime);
-            // console.log('Time Difference:', timeDifference);
-
-            if (timeDifference <= 30 && timeDifference > 0) {
-                // console.log('Starting Countdown for:', name);
-                setCountDownPage(true);
-                setMainPage(false);
-                setCountDownAthan(name);
-                setHadithPage(false)
+      const currentTime = moment.tz("America/New_York");
+  
+      const athanTimes = [
+          { name: 'Fajr', time: fajrAthan },
+          { name: 'Dhuhr', time: dhurAthan },
+          { name: 'Asr', time: asrPrayer },
+          { name: 'Maghrib', time: maghribAthan },
+          { name: 'Isha', time: ishaAthan }
+      ];
+  
+      athanTimes.forEach(({ name, time }) => {
+          if (time) {
+              // Create a moment object for the current date and time in ET
+              const athanTime = moment.tz(`${moment().format('YYYY-MM-DD')} ${time}`, "YYYY-MM-DD HH:mm", "America/New_York");
+  
+  
+              const timeDifference = athanTime.diff(currentTime, 'seconds');
+              console.log('Test Athan Time (ET):', athanTime.format());
+              console.log('Current Time (ET):', currentTime.format());
+              console.log('Time Difference (seconds):', timeDifference);
+  
+              if (timeDifference <= 30 && timeDifference > 0) {
+                  console.log('Starting Countdown for:', name);
+                  setCountDownPage(true);
+                  setMainPage(false);
+                  setCountDownAthan(name);
+                  setHadithPage(false);
               }
           }
       });
   };
+  
+
 
   const onCountDownComplete = () => {
       setCountDownPage(false);
