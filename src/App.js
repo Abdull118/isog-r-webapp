@@ -265,9 +265,9 @@ function App() {
     setTimeUntilNextPrayerHrs(hours);
     setTimeUntilNextPrayerMin(minutes);
 
-    console.log('Current Time (ET):', currentTime.format());
-    console.log('Next Prayer Time (ET):', nextPrayerTime.format());
-    console.log('Time Until Next Prayer (Duration):', `${hours} hours and ${minutes} minutes`);
+    // console.log('Current Time (ET):', currentTime.format());
+    // console.log('Next Prayer Time (ET):', nextPrayerTime.format());
+    // console.log('Time Until Next Prayer (Duration):', `${hours} hours and ${minutes} minutes`);
   };
 
   const messageSwapper = () => {
@@ -302,12 +302,12 @@ function App() {
   
   
               const timeDifference = athanTime.diff(currentTime, 'seconds');
-              console.log('Test Athan Time (ET):', athanTime.format());
-              console.log('Current Time (ET):', currentTime.format());
-              console.log('Time Difference (seconds):', timeDifference);
+              // console.log('Test Athan Time (ET):', athanTime.format());
+              // console.log('Current Time (ET):', currentTime.format());
+              // console.log('Time Difference (seconds):', timeDifference);
   
               if (timeDifference <= 30 && timeDifference > 0) {
-                  console.log('Starting Countdown for:', name);
+                  // console.log('Starting Countdown for:', name);
                   setCountDownPage(true);
                   setMainPage(false);
                   setCountDownAthan(name);
