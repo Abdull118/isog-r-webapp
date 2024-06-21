@@ -310,6 +310,7 @@ function App() {
                 setCountDownPage(true);
                 setMainPage(false);
                 setCountDownAthan(name);
+                setHadithPage(false)
               }
           }
       });
