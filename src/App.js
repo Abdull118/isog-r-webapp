@@ -146,7 +146,7 @@ function App() {
         }
       );
       const json = await response.json();
-      setNextPrayer(json.nextPrayer);
+      // setNextPrayer(json.nextPrayer);
     } catch (e) {
       console.log(e);
     }
@@ -212,7 +212,7 @@ function App() {
   const [timeUntilNextPrayerMin, setTimeUntilNextPrayerMin] = useState("");
 
   useEffect(() => {
-    if (clock && nextPrayer) {
+    if (clock) {
       calculateTimeUntilNextPrayer();
     }
   }, [
@@ -248,6 +248,7 @@ function App() {
     let nextPrayerTime;
     for (let prayer in prayerTimes) {
       if (prayerTimes[prayer].isAfter(currentTime)) {
+        setNextPrayer(prayer)
         nextPrayerTime = prayerTimes[prayer];
         break;
       }
