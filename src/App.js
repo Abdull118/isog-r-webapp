@@ -39,6 +39,11 @@ function App() {
   const [maghribPrayer, setMaghribPrayer] = useState();
   const [ishaPrayer, setIshaPrayer] = useState();
 
+  const [fajrPrayer24Hr, setFajrPrayer24Hr] = useState();
+  const [dhurPrayer24Hr, setDhurPrayer24Hr] = useState();
+  const [asrPrayer24Hr, setAsrPrayer24Hr] = useState(); 
+  const [ishaPrayer24Hr, setIshaPrayer24Hr] = useState();
+
   const [shuruq, setShuruq] = useState();
   const [currentDate, setCurrentDate] = useState();
   const [currentCustomDate, setCurrentCustomDate] = useState();
@@ -109,9 +114,15 @@ function App() {
       const json = await response.json();
       setFajrPrayer(json.fajr);
       setDhurPrayer(json.dhuhr);
-      setAsrPrayer(json.asr);
-      setMaghribPrayer(json.maghrib);
+      setAsrPrayer(json.asr); 
       setIshaPrayer(json.isha);
+
+      setFajrPrayer24Hr(convertTo24Hour(json.fajr + ' AM'));
+      setDhurPrayer24Hr(convertTo24Hour(json.dhuhr + ' PM')); 
+      setAsrPrayer24Hr(convertTo24Hour(json.asr + ' PM')); 
+      setIshaPrayer24Hr(convertTo24Hour(json.isha + ' PM'));
+
+
     } catch (e) {
       console.log(e);
     }
@@ -129,28 +140,21 @@ function App() {
     }
   };
 
-  const getNextPrayer = async () => {
-    try {
-      const response = await fetch(
-        "https://isog-prayer-times-server.vercel.app/api/nextPrayers",
-        {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-            // Add other headers if needed
-          },
-          body: JSON.stringify({
-            // Your PUT request payload (if necessary)
-            // Example: { key: 'value' }
-          }),
-        }
-      );
-      const json = await response.json();
-      // setNextPrayer(json.nextPrayer);
-    } catch (e) {
-      console.log(e);
+  function convertTo24Hour(time) {
+    const [timePart, modifier] = time.split(" ");
+  
+    let [hours, minutes] = timePart.split(":");
+  
+    if (hours === "12") {
+      hours = "00";
     }
-  };
+  
+    if (modifier === "PM") {
+      hours = parseInt(hours, 10) + 12;
+    }
+    console.log(time, `${hours.toString().padStart(2, '0')}:${minutes}`)
+    return `${hours.toString().padStart(2, '0')}:${minutes}`;
+  }
 
   function convertTo12Hour(oldFormatTime) {
     var oldFormatTimeArray = oldFormatTime.split(":");
@@ -284,16 +288,17 @@ function App() {
 };
   
   const [testAthanTime, setTestAthanTime] = useState('');
+  const [athanOrIqamah, setAthanOrIqamah] = useState('');
 
   const checkForAthan = () => {
       const currentTime = moment.tz("America/New_York");
   
       const athanTimes = [
-          { name: 'Fajr', time: fajrAthan },
-          { name: 'Dhuhr', time: dhurAthan },
-          { name: 'Asr', time: asrPrayer },
-          { name: 'Maghrib', time: maghribAthan },
-          { name: 'Isha', time: ishaAthan }
+          { name: 'FAJR', time: fajrAthan },
+          { name: 'DHUHR', time: dhurAthan },
+          { name: 'ASR', time: asrPrayer },
+          { name: 'MAGHRIB', time: maghribAthan },
+          { name: 'ISHA', time: ishaAthan }
       ];
   
       athanTimes.forEach(({ name, time }) => {
@@ -311,8 +316,38 @@ function App() {
                   // console.log('Starting Countdown for:', name);
                   setCountDownPage(true);
                   setMainPage(false);
+                  setHadithPage(false);
+                  setCountDownAthan(name);
+                  setAthanOrIqamah('ATHAN')
+                  
+              }
+          }
+      });
+  };
+
+  const checkForIqamah = () => {
+      const currentTime = moment.tz("America/New_York");
+  
+      const iqamahTimes = [
+          { name: 'FAJR', time: fajrPrayer24Hr },
+          { name: 'DHUHR', time: dhurPrayer24Hr },
+          { name: 'ASR', time: asrPrayer24Hr },  
+          { name: 'ISHA', time: ishaPrayer24Hr }
+      ];
+  
+      iqamahTimes.forEach(({ name, time }) => {
+          if (time) {
+              // Create a moment object for the current date and time in ET
+              const iqamahTime = moment.tz(`${moment().format('YYYY-MM-DD')} ${time}`, "YYYY-MM-DD HH:mm", "America/New_York");
+              const timeDifference = iqamahTime.diff(currentTime, 'seconds');
+  
+              if (timeDifference <= 30 && timeDifference > 0) {
+                  console.log('Starting Countdown for:', name);
+                  setCountDownPage(true);
+                  setMainPage(false);
                   setCountDownAthan(name);
                   setHadithPage(false);
+                  setAthanOrIqamah('IQAMAH')
               }
           }
       });
@@ -329,6 +364,11 @@ function App() {
       const athanCheckInterval = setInterval(checkForAthan, 1000);
       return () => clearInterval(athanCheckInterval);
   }, [fajrAthan, dhurAthan, asrAthan, maghribAthan, ishaAthan]);
+
+  useEffect(() => {
+      const iqamahCheckInterval = setInterval(checkForIqamah, 1000);
+      return () => clearInterval(iqamahCheckInterval);
+  }, [fajrPrayer, dhurPrayer, asrPrayer, ishaAthan]);
 
 // useEffect(() => {
 //     const currentTime = new Date();
@@ -354,13 +394,11 @@ function App() {
     getPrayerTimes();
     getAnnouncements();
     getHadiths();
-    getNextPrayer();
 
     setInterval(() => {
       getAnnouncements();
       getPrayerTimes();
       getHadiths();
-      getNextPrayer();
     }, 1800000);
   }, []);
 
@@ -389,7 +427,7 @@ function App() {
               }, 6 * 60 * 1000); // 6 minutes after hadith page is hidden
 
           return () => clearTimeout(sixMinuteTimeout);
-          }, 2 * 60 * 1000); // 2 minutes for showing hadith page
+          }, 30000); // 2 minutes for showing hadith page
 
           return () => clearTimeout(twoMinuteTimeout);
       };
@@ -697,6 +735,7 @@ function App() {
       countDownAthan={countDownAthan}
       setMainPage={setMainPage}
       onCountDownComplete={onCountDownComplete}
+      athanOrIqamah={athanOrIqamah}
       />
     )}
       

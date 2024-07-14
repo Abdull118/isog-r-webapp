@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import './Countdown.css';
 import isogLogo from "./assests/images/isog.png";
 
-const Countdown = ({ countDownAthan, onCountDownComplete }) => {
+const Countdown = ({ countDownAthan, onCountDownComplete, athanOrIqamah }) => {
 
     const [countDownSeconds, setCountDownSeconds] = useState(30);
 
@@ -34,8 +34,8 @@ const Countdown = ({ countDownAthan, onCountDownComplete }) => {
                     </div>
                     <div className='countDownText'>
                         <div>SECONDS TO</div>
-                        <div>{countDownAthan}</div>
-                        <div>ATHAN</div>
+                        <div className='countDownAthanName'>{countDownAthan}</div>
+                        <div>{athanOrIqamah}</div>
                     </div>
                 </div>
             </div>
