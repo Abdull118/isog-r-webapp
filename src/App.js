@@ -261,6 +261,7 @@ function App() {
     // If no prayer time is after the current time, set the next prayer to the first prayer of the next day
     if (!nextPrayerTime) {
       nextPrayerTime = prayerTimes.fajr.add(1, 'day');
+      setNextPrayer('FAJR')
     }
 
     const duration = moment.duration(nextPrayerTime.diff(currentTime));
