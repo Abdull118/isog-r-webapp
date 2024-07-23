@@ -313,7 +313,7 @@ function App() {
               // console.log('Current Time (ET):', currentTime.format());
               // console.log('Time Difference (seconds):', timeDifference);
   
-              if (timeDifference <= 30 && timeDifference > 0) {
+              if (timeDifference <= 300 && timeDifference > 0) {
                   // console.log('Starting Countdown for:', name);
                   setCountDownPage(true);
                   setMainPage(false);
@@ -342,7 +342,7 @@ function App() {
               const iqamahTime = moment.tz(`${moment().format('YYYY-MM-DD')} ${time}`, "YYYY-MM-DD HH:mm", "America/New_York");
               const timeDifference = iqamahTime.diff(currentTime, 'seconds');
   
-              if (timeDifference <= 30 && timeDifference > 0) {
+              if (timeDifference <= 300 && timeDifference > 0) {
                   console.log('Starting Countdown for:', name);
                   setCountDownPage(true);
                   setMainPage(false);
