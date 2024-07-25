@@ -179,7 +179,7 @@
   font-weight: 400;
   line-height: normal;
   display: flex;
-  align-items: end;
+  align-items: flex-end;
   height: 59.5px;
 }
 .header2Text {

@@ -7,11 +7,13 @@ import vector from "./assests/images/Vector.png";
 import cloud from "./assests/images/cloud.png";
 import Hadith from "./Hadith";
 import Countdown from "./Countdown";
+import Announcement from "./Announcement";
 
 // use effect comes last
 function App() {
   const [mainPage, setMainPage] = useState(true)
   const [hadithPage, setHadithPage] = useState(false)
+  const [announcementsPage, setAnnouncementsPage] = useState(false)
   const [countDownPage, setCountDownPage] = useState(false)
 
   const [countDownAthan, setCountDownAthan] = useState();
@@ -297,7 +299,7 @@ function App() {
       const athanTimes = [
           { name: 'FAJR', time: fajrAthan },
           { name: 'DHUHR', time: dhurAthan },
-          { name: 'ASR', time: asrPrayer },
+          { name: 'ASR', time: asrAthan },
           { name: 'MAGHRIB', time: maghribAthan },
           { name: 'ISHA', time: ishaAthan }
       ];
@@ -416,26 +418,34 @@ function App() {
 
   useEffect(() => {
     const startIntervals = () => {
-        setHadithPage(true);
-        setMainPage(false);
+      setHadithPage(true);
+      setMainPage(false);
+      setAnnouncementsPage(false);
 
-        const twoMinuteTimeout = setTimeout(() => {
-            setHadithPage(false);
-            setMainPage(true);
+      const hadithTimeout = setTimeout(() => {
+        setHadithPage(false);
+        setAnnouncementsPage(true);
 
-            const sixMinuteTimeout = setTimeout(() => {
-                startIntervals();
-              }, 6 * 60 * 1000); // 6 minutes after hadith page is hidden
+        const announcementsTimeout = setTimeout(() => {
+          setAnnouncementsPage(false);
+          setMainPage(true);
 
-          return () => clearTimeout(sixMinuteTimeout);
-          }, 30000); // 2 minutes for showing hadith page
+          const mainPageTimeout = setTimeout(() => {
+            startIntervals();
+          }, 6 * 60 * 1000); // 6 minutes for showing main page
 
-          return () => clearTimeout(twoMinuteTimeout);
-      };
-      if(!countDownPage){
-        startIntervals();
-      }
-    
+          return () => clearTimeout(mainPageTimeout);
+        }, 30000); // 30 seconds for showing announcements page
+
+        return () => clearTimeout(announcementsTimeout);
+      }, 30000); // 30 seconds for showing hadith page
+
+      return () => clearTimeout(hadithTimeout);
+    };
+
+    if (!countDownPage) {
+      startIntervals();
+    }
   }, [countDownPage]);
 
   return (
@@ -738,6 +748,10 @@ function App() {
       onCountDownComplete={onCountDownComplete}
       athanOrIqamah={athanOrIqamah}
       />
+    )}
+
+    {announcementsPage &&(
+      <Announcement />
     )}
       
     
