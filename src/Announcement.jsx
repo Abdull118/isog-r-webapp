@@ -5,7 +5,7 @@ import QRCode from 'qrcode.react';
 
 const Announcement = () => {
     const url = 'https://isofg.ca';
-    const eTransfer = 'mailto:donations.isofg@gmail.com';
+    const eTransfer = 'https://isofg.ca/etransfer';
   return (
     <div className='hadithContainerRoot'>
     <div className='bismala'>﷽</div>
