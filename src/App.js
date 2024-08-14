@@ -434,7 +434,7 @@ function App() {
 
                 mainPageTimeout = setTimeout(() => {
                     startIntervals();
-                }, 1 * 60 * 1000); // 6 minutes for showing main page
+                }, 6 * 60 * 1000); // 6 minutes for showing main page
 
             }, 30000); // 30 seconds for showing announcements page
 
