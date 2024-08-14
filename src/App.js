@@ -417,36 +417,41 @@ function App() {
   }, [announcements]);
 
   useEffect(() => {
+    let hadithTimeout, announcementsTimeout, mainPageTimeout;
+
     const startIntervals = () => {
-      setHadithPage(true);
-      setMainPage(false);
-      setAnnouncementsPage(false);
+        setHadithPage(true);
+        setMainPage(false);
+        setAnnouncementsPage(false);
 
-      const hadithTimeout = setTimeout(() => {
-        setHadithPage(false);
-        setAnnouncementsPage(true);
+        hadithTimeout = setTimeout(() => {
+            setHadithPage(false);
+            setAnnouncementsPage(true);
 
-        const announcementsTimeout = setTimeout(() => {
-          setAnnouncementsPage(false);
-          setMainPage(true);
+            announcementsTimeout = setTimeout(() => {
+                setAnnouncementsPage(false);
+                setMainPage(true);
 
-          const mainPageTimeout = setTimeout(() => {
-            startIntervals();
-          }, 6 * 60 * 1000); // 6 minutes for showing main page
+                mainPageTimeout = setTimeout(() => {
+                    startIntervals();
+                }, 1 * 60 * 1000); // 6 minutes for showing main page
 
-          return () => clearTimeout(mainPageTimeout);
-        }, 30000); // 30 seconds for showing announcements page
+            }, 30000); // 30 seconds for showing announcements page
 
-        return () => clearTimeout(announcementsTimeout);
-      }, 30000); // 30 seconds for showing hadith page
-
-      return () => clearTimeout(hadithTimeout);
+        }, 30000); // 30 seconds for showing hadith page
     };
 
     if (!countDownPage) {
-      startIntervals();
+        startIntervals();
     }
-  }, [countDownPage]);
+
+    return () => {
+        clearTimeout(hadithTimeout);
+        clearTimeout(announcementsTimeout);
+        clearTimeout(mainPageTimeout);
+    };
+}, [countDownPage]);
+
 
   return (
     <>
