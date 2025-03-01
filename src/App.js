@@ -8,6 +8,7 @@ import cloud from "./assests/images/cloud.png";
 import Hadith from "./Hadith";
 import Countdown from "./Countdown";
 import Announcement from "./Announcement";
+import Ramadan from "./Ramadan";
 
 // use effect comes last
 function App() {
@@ -15,6 +16,7 @@ function App() {
   const [hadithPage, setHadithPage] = useState(false)
   const [announcementsPage, setAnnouncementsPage] = useState(false)
   const [countDownPage, setCountDownPage] = useState(false)
+  const [ramadanPage, setRamadanPage] = useState(false)
 
   const [countDownAthan, setCountDownAthan] = useState();
 
@@ -417,12 +419,13 @@ function App() {
   }, [announcements]);
 
   useEffect(() => {
-    let hadithTimeout, announcementsTimeout, mainPageTimeout;
+    let hadithTimeout, announcementsTimeout, ramadanTimeout, mainPageTimeout;
 
     const startIntervals = () => {
         setHadithPage(true);
         setMainPage(false);
         setAnnouncementsPage(false);
+        setRamadanPage(false);
 
         hadithTimeout = setTimeout(() => {
             setHadithPage(false);
@@ -430,11 +433,17 @@ function App() {
 
             announcementsTimeout = setTimeout(() => {
                 setAnnouncementsPage(false);
-                setMainPage(true);
+                setRamadanPage(true);
 
-                mainPageTimeout = setTimeout(() => {
-                    startIntervals();
-                }, 3 * 60 * 1000); // 6 minutes for showing main page
+                ramadanTimeout = setTimeout(() => {
+                    setRamadanPage(false);
+                    setMainPage(true);
+
+                    mainPageTimeout = setTimeout(() => {
+                        startIntervals();
+                    }, 3 * 60 * 1000); // 3 minutes for showing main page
+
+                }, 60000); // 30 seconds for showing Ramadan page
 
             }, 30000); // 30 seconds for showing announcements page
 
@@ -448,9 +457,11 @@ function App() {
     return () => {
         clearTimeout(hadithTimeout);
         clearTimeout(announcementsTimeout);
+        clearTimeout(ramadanTimeout);
         clearTimeout(mainPageTimeout);
     };
 }, [countDownPage]);
+
 
 
   return (
@@ -757,6 +768,10 @@ function App() {
 
     {announcementsPage &&(
       <Announcement />
+    )}
+
+    {ramadanPage &&(
+      <Ramadan currentHijriDay={currentHijriDay} fajrAthan={fajrAthan} maghribAthan12Hr={maghribAthan12Hr}/>
     )}
       
     
