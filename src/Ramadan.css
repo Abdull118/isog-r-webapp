@@ -1,0 +1,61 @@
+.ramadanBackground{
+    background: url('./assests/images/ramadan1.png') no-repeat;
+    width: 945px;
+    height: 527px;
+    background-size: cover;
+    object-fit: contain;
+}
+
+.ramadanBackground > div:first-child{
+    display: flex
+    ;
+        font-size: 75px;
+        color: white;
+        font-family: 'GreatVibes';
+        position: absolute;
+        /* right: 10px; */
+        width: 945px;
+        left: 600px;
+        top: 180px;
+}
+
+.suhoorSection{
+    border: 3px solid rgb(204 160 73);
+    border-radius: 100%;
+    padding: 40px;
+    font-size: 70px;
+    text-align: center;
+    font-family: 'GreatVibes';
+    color: rgb(204 160 73);
+}
+
+.iftarSection{
+    border: 3px solid rgb(204 160 73);
+    border-radius: 100%;
+    font-size: 70px;
+    text-align: center;
+    font-family: 'GreatVibes';
+    color: rgb(204 160 73);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 258px;
+    height: 258px;
+}
+
+.iftarSection>div:last-child, .suhoorSection>div:last-child{
+    color: white;
+}
+
+.fastingSection{
+
+        
+    height: 527px;
+    display: flex
+;
+    justify-content: center;
+    align-items: center;
+    padding-top: 125px;
+    gap: 70px;
+}
