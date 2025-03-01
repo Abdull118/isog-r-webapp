@@ -20,10 +20,10 @@ const Announcement = () => {
                 For E-Transfers: <br/>
                 <QRCode value={eTransfer} className='QRCode'/>
                 </div>
-                <div>
+                {/* <div>
                 For Other Options: <br/>
                 <QRCode value={url} className='QRCode'/>
-                </div>
+                </div> */}
          </div>
          
     </div>
