@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import './Ramadan.css';
 import ramadanCalendar from "./assests/images/ramadanCalendar.png";
 
-const Ramadan = ({ currentHijriDay, maghribAthan12Hr, fajrAthan }) => {
+const Ramadan = ({ currentHijriDay, maghribAthan12Hr, suhoor }) => {
   const [ramadanHero, setRamadanHero] = useState(true);
   const [ramadanDownload, setRamadanDownload] = useState(false);
 
@@ -23,7 +23,7 @@ const Ramadan = ({ currentHijriDay, maghribAthan12Hr, fajrAthan }) => {
           <div className='fastingSection'>
             <div className='suhoorSection'>
               <div>Suhoor</div>
-              <div>{fajrAthan}</div>
+              <div>{suhoor}</div>
             </div>
             <div className='iftarSection'>
               <div>Iftar</div>

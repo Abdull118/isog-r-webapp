@@ -86,6 +86,8 @@ function App() {
     setClockAP(moment().format("A"));
   };
 
+  const [suhoor, setSuhoor] = useState()
+
   const getAthan = async () => {
     try {
       const response = await fetch(
@@ -93,6 +95,7 @@ function App() {
       );
       const json = await response.json();
       setFajrAthan((json.data.timings.Fajr));
+      setSuhoor(subtractMinutesToTime(json.data.timings.Fajr, 10));
       setShuruq(addMinutesToTime(json.data.timings.Sunrise, 15));
       setDhurAthan((json.data.timings.Dhuhr));
       setAsrAthan((json.data.timings.Asr));
@@ -180,6 +183,16 @@ function App() {
     const date = new Date();
     date.setHours(hours);
     date.setMinutes(minutes + minutesToAdd);
+    const newHours = date.getHours().toString().padStart(2, "0");
+    const newMinutes = date.getMinutes().toString().padStart(2, "0");
+
+    return `${newHours}:${newMinutes}`;
+  };
+  const subtractMinutesToTime = (timeString, minutesToSubtract) => {
+    const [hours, minutes] = timeString.split(":").map(Number);
+    const date = new Date();
+    date.setHours(hours);
+    date.setMinutes(minutes - minutesToSubtract);
     const newHours = date.getHours().toString().padStart(2, "0");
     const newMinutes = date.getMinutes().toString().padStart(2, "0");
 
@@ -734,7 +747,7 @@ function App() {
                 <div className="vector">
                   <img src={vector} />
                 </div>
-                {fajrAthan}
+                {suhoor}
                 <span className="am4">AM</span>
                 <div className="suhoorIftar">SUHOOR</div>
               </div>
@@ -771,7 +784,7 @@ function App() {
     )}
 
     {ramadanPage &&(
-      <Ramadan currentHijriDay={currentHijriDay} fajrAthan={fajrAthan} maghribAthan12Hr={maghribAthan12Hr}/>
+      <Ramadan currentHijriDay={currentHijriDay} suhoor={suhoor} maghribAthan12Hr={maghribAthan12Hr}/>
     )}
       
     
