@@ -432,13 +432,12 @@ function App() {
   }, [announcements]);
 
   useEffect(() => {
-    let hadithTimeout, announcementsTimeout, ramadanTimeout, mainPageTimeout;
+    let hadithTimeout, announcementsTimeout, mainPageTimeout;
 
     const startIntervals = () => {
         setHadithPage(true);
         setMainPage(false);
         setAnnouncementsPage(false);
-        setRamadanPage(false);
 
         hadithTimeout = setTimeout(() => {
             setHadithPage(false);
@@ -446,17 +445,11 @@ function App() {
 
             announcementsTimeout = setTimeout(() => {
                 setAnnouncementsPage(false);
-                setRamadanPage(true);
+                setMainPage(true);
 
-                ramadanTimeout = setTimeout(() => {
-                    setRamadanPage(false);
-                    setMainPage(true);
-
-                    mainPageTimeout = setTimeout(() => {
-                        startIntervals();
-                    }, 3 * 60 * 1000); // 3 minutes for showing main page
-
-                }, 60000); // 30 seconds for showing Ramadan page
+                mainPageTimeout = setTimeout(() => {
+                    startIntervals();
+                }, 3 * 60 * 1000); // 6 minutes for showing main page
 
             }, 30000); // 30 seconds for showing announcements page
 
@@ -470,7 +463,6 @@ function App() {
     return () => {
         clearTimeout(hadithTimeout);
         clearTimeout(announcementsTimeout);
-        clearTimeout(ramadanTimeout);
         clearTimeout(mainPageTimeout);
     };
 }, [countDownPage]);
