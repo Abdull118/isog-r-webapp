@@ -1,5 +1,5 @@
 import logo from "./logo.svg";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import "./App.css";
 import moment from 'moment-timezone';
 import isogLogo from "./assests/images/isog.png";
@@ -468,6 +468,58 @@ function App() {
 }, [countDownPage]);
 
 
+const scrollRef = useRef(null);
+ 
+
+useEffect(() => {
+  const container = scrollRef.current;
+  if (!container) return;
+
+  const shouldScroll = container.scrollHeight > container.clientHeight;
+  if (!shouldScroll) return;
+
+  let scrollPos = 0;
+  let animationId = null;
+
+  const scrollStep = () => {
+    if (!container) return;
+
+    scrollPos += 0.2; 
+    container.scrollTop = scrollPos;
+
+    if (scrollPos + container.clientHeight >= container.scrollHeight) {
+      // Pause at bottom
+      cancelAnimationFrame(animationId);
+      setTimeout(() => {
+        scrollPos = 0;
+        container.scrollTop = 0;
+        animationId = requestAnimationFrame(scrollStep);
+      }, 2000);
+    } else {
+      animationId = requestAnimationFrame(scrollStep);
+    }
+  };
+
+  const start = setTimeout(() => {
+    animationId = requestAnimationFrame(scrollStep);
+  }, 2000);
+
+  return () => {
+    cancelAnimationFrame(animationId);
+    clearTimeout(start);
+  };
+}, [message]); 
+
+useEffect(() => {
+  const interval = setInterval(() => {
+    window.location.reload();
+  }, 86400000);
+
+  return () => clearInterval(interval);
+}, []);
+
+
+
 
   return (
     <>
@@ -494,13 +546,13 @@ function App() {
                 <div className="header2">
                   <div className="header2Text"> {messageHeader} </div>
                 </div>
-                <div className="message">
-                  {Array.isArray(message) ? (
-                    message.map((item, index) => <div key={index}>{item}</div>)
-                  ) : (
-                    <div>{message}</div>
-                  )}
-                </div>
+                <div className="message" ref={scrollRef}>
+      <div className="message-scroll-content">
+        {Array.isArray(message)
+          ? message.map((item, index) => <div key={index}>{item}</div>)
+          : <div>{message}</div>}
+      </div>
+    </div>
               </div>
             </div>
 
