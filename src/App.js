@@ -470,7 +470,6 @@ function App() {
 
 const scrollRef = useRef(null);
  
-
 useEffect(() => {
   const container = scrollRef.current;
   if (!container) return;
@@ -480,35 +479,42 @@ useEffect(() => {
 
   let scrollPos = 0;
   let animationId = null;
+  let pauseTimeout = null;
 
   const scrollStep = () => {
     if (!container) return;
 
-    scrollPos += 0.2; 
+    scrollPos += 0.2;
     container.scrollTop = scrollPos;
 
     if (scrollPos + container.clientHeight >= container.scrollHeight) {
-      // Pause at bottom
+      // Pause at bottom before resetting to top
       cancelAnimationFrame(animationId);
-      setTimeout(() => {
+      pauseTimeout = setTimeout(() => {
         scrollPos = 0;
         container.scrollTop = 0;
-        animationId = requestAnimationFrame(scrollStep);
+
+        // Pause again at top before restarting
+        pauseTimeout = setTimeout(() => {
+          animationId = requestAnimationFrame(scrollStep);
+        }, 2000);
       }, 2000);
     } else {
       animationId = requestAnimationFrame(scrollStep);
     }
   };
 
-  const start = setTimeout(() => {
+  // Initial 2s pause
+  pauseTimeout = setTimeout(() => {
     animationId = requestAnimationFrame(scrollStep);
   }, 2000);
 
   return () => {
     cancelAnimationFrame(animationId);
-    clearTimeout(start);
+    clearTimeout(pauseTimeout);
   };
-}, [message]); 
+}, [message]);
+
 
 useEffect(() => {
   const interval = setInterval(() => {
