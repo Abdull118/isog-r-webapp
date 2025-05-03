@@ -516,13 +516,13 @@ useEffect(() => {
 }, [message]);
 
 
-useEffect(() => {
-  const interval = setInterval(() => {
-    window.location.reload();
-  }, 86400000);
+// useEffect(() => {
+//   const interval = setInterval(() => {
+//     window.location.reload();
+//   }, 86400000);
 
-  return () => clearInterval(interval);
-}, []);
+//   return () => clearInterval(interval);
+// }, []);
 
 
 
