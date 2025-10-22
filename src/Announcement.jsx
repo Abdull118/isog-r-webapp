@@ -29,7 +29,7 @@ const Announcement = () => {
     </div>
 </div>
 
-<img src={isogLogo} className='hadithISOGLogo'/>
+{/* <img src={isogLogo} className='hadithISOGLogo'/> */}
 </div>
   )
 }

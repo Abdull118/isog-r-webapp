@@ -529,49 +529,74 @@ useEffect(() => {
 
   return (
     <>
-    {mainPage &&(
+    {countDownPage ? (
+      <Countdown 
+      countDownAthan={countDownAthan}
+      setMainPage={setMainPage}
+      onCountDownComplete={onCountDownComplete}
+      athanOrIqamah={athanOrIqamah}
+      />
+    ) : ramadanPage ? (
+      <Ramadan currentHijriDay={currentHijriDay} suhoor={suhoor} maghribAthan12Hr={maghribAthan12Hr}/>
+    ) : (
       <div className="App">
         <div>
-          <div className="bigHeader">
-            <div className="headerPart1">
-              <div className="isogLogo">
-                <img src={isogLogo} />
-              </div>
+          {/* Dynamic content area - changes based on page */}
+          {mainPage && (
+            <>
+              <div className="bigHeader">
+                <div className="headerPart1">
+                  <div className="isogLogo">
+                    <img src={isogLogo} />
+                  </div>
 
-              <div className="isogText">Islamic Society of Guelph</div>
-            </div>
-
-            <div className="headerPart2">
-              <div className="headerFont">مسجد أبو بكر الصديق</div>
-              <div className="headerFont2">www.ISOFG.ca</div>
-            </div>
-          </div>
-          <div className="skinnySections">
-            <div className="Boxes">
-              <div>
-                <div className="header2">
-                  <div className="header2Text"> {messageHeader} </div>
+                  <div className="isogText">Islamic Society of Guelph</div>
                 </div>
-                <div className="message" ref={scrollRef}>
-      <div className="message-scroll-content">
-        {Array.isArray(message)
-          ? message.map((item, index) => <div key={index}>{item}</div>)
-          : <div>{message}</div>}
-      </div>
-    </div>
-              </div>
-            </div>
 
-            <div className="skinnyBoxes">
-              <div className="donateBox">
-                <div className="donateText">DONATE TO YOUR MASJID</div>
+                <div className="headerPart2">
+                  <div className="headerFont">مسجد أبو بكر الصديق</div>
+                  <div className="headerFont2">www.ISOFG.ca</div>
+                </div>
               </div>
+              <div className="skinnySections">
+                <div className="Boxes">
+                  <div>
+                    <div className="header2">
+                      <div className="header2Text"> {messageHeader} </div>
+                    </div>
+                    <div className="message" ref={scrollRef}>
+                      <div className="message-scroll-content">
+                        {Array.isArray(message)
+                          ? message.map((item, index) => <div key={index}>{item}</div>)
+                          : <div>{message}</div>}
+                      </div>
+                    </div>
+                  </div>
+                </div>
 
-              <div className="silenceBox">
-                <div className="silenceText">SILENCE YOUR PHONE</div>
+                <div className="skinnyBoxes">
+                  <div className="donateBox">
+                    <div className="donateText">DONATE TO YOUR MASJID</div>
+                  </div>
+
+                  <div className="silenceBox">
+                    <div className="silenceText">SILENCE YOUR PHONE</div>
+                  </div>
+                </div>
               </div>
-            </div>
+            </>
+          )}
 
+          {hadithPage && (
+            <Hadith />
+          )}
+
+          {announcementsPage && (
+            <Announcement />
+          )}
+
+          {/* Static content area - always visible */}
+          <div className="skinnySections">
             <div className="bigPrayerSection">
               <div className="longBlue">
                 <div className="startIqamah">
@@ -749,6 +774,7 @@ useEffect(() => {
             </div>
           </div>
         </div>
+        
         <div className="rightSide">
           <div className="dates">
             <div className="arabicDate">
@@ -815,28 +841,6 @@ useEffect(() => {
         </div>
       </div>
     )}
-
-    {hadithPage &&(
-      <Hadith />
-    )}
-
-    {countDownPage &&(
-      <Countdown 
-      countDownAthan={countDownAthan}
-      setMainPage={setMainPage}
-      onCountDownComplete={onCountDownComplete}
-      athanOrIqamah={athanOrIqamah}
-      />
-    )}
-
-    {announcementsPage &&(
-      <Announcement />
-    )}
-
-    {ramadanPage &&(
-      <Ramadan currentHijriDay={currentHijriDay} suhoor={suhoor} maghribAthan12Hr={maghribAthan12Hr}/>
-    )}
-      
     
     </>
   );

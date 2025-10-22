@@ -1,6 +1,9 @@
 .hadithContainerRoot{
-    width: 945px;
-    height: 527px;
+    width: 704px;
+    height: 381px;
+    margin-left: 7px;
+    margin-right: 32px;
+    margin-bottom: 12px;
     background: url('./assests/images/grayBackground.webp') no-repeat;
     background-size: cover;
     object-fit: contain;
