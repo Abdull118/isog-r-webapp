@@ -213,7 +213,7 @@ function App() {
   };
 
   const momentGetDate = () => {
-    setMomentDate(moment().format("ddd MMMM D, YYYY"));
+    setMomentDate(moment().format("ddd MMM D, YYYY"));
   };
 
   const [announcements, setAnnouncements] = useState([]);
@@ -596,7 +596,7 @@ useEffect(() => {
           )}
 
           {/* Static content area - always visible */}
-          <div className="skinnySections">
+          <div className="skinnySection2">
             <div className="bigPrayerSection">
               <div className="longBlue">
                 <div className="startIqamah">

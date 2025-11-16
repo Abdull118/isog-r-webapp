@@ -406,6 +406,12 @@
   gap: 12px;
   margin-bottom: 12px;
 }
+.skinnySections2 {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 12px;
+}
 .header {
   display: flex;
   justify-content: space-between;
