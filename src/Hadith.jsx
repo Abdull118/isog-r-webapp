@@ -7,7 +7,8 @@ const Hadith = () => {
   const [hadith, setHadith] = useState('');
   const [trigger, setTrigger] = useState(0);
   
-  const [hadithRef, fontSize] = useFitText(400, trigger); 
+  // Container height (381px) - bismala height (60px) - bottom padding (20px) = 301px available
+  const [hadithRef, fontSize] = useFitText(301, trigger); 
   
   useEffect(() => {
     getHadiths();
